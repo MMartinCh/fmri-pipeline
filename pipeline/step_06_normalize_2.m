@@ -1,0 +1,62 @@
+%% ==================== SPM25 Normalize: Write (Functional) ====================
+% Applies deformation fields to realigned functional images
+
+spm('defaults','FMRI');
+spm_jobman('initcfg');
+
+runs = {'01_func','02_func','03_func','04_func'};
+base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden';
+
+for r = 1:numel(runs)
+    run_id = runs{r};
+
+    func_dir = fullfile(base_dir, subj, run_id, 'func');
+    anat_dir = fullfile(base_dir, subj, run_id, 'anat');
+
+    %% --- Find deformation field ---
+    def_field = dir(fullfile(anat_dir, 'y_*.nii'));
+    if isempty(def_field)
+        warning('No deformation field found for %s - %s', subj, run_id);
+        continue;
+    end
+    def_field = fullfile(def_field(1).folder, def_field(1).name);
+
+    %% --- Find realigned functional images ---
+    func_files = dir(fullfile(func_dir, 'rs*.nii'));
+    if isempty(func_files)
+        warning('No realigned functional files found for %s - %s', subj, run_id);
+        continue;
+    end
+    func_files = fullfile({func_files.folder}, {func_files.name})';
+
+    %% --- Build matlabbatch ---
+    clear matlabbatch
+    matlabbatch{1}.spm.spatial.normalise.write.subj.def = {def_field};
+    matlabbatch{1}.spm.spatial.normalise.write.subj.resample = func_files;
+
+    matlabbatch{1}.spm.spatial.normalise.write.woptions.bb = ...
+        [-78 -112 -70
+          78   76   85];
+    matlabbatch{1}.spm.spatial.normalise.write.woptions.vox = [2 2 2];
+    matlabbatch{1}.spm.spatial.normalise.write.woptions.interp = 2;
+    matlabbatch{1}.spm.spatial.normalise.write.woptions.prefix = 'n';
+
+    %% --- Run ---
+    spm_jobman('run', matlabbatch);
+
+    %% --- Verify output ---
+    for i = 1:numel(func_files)
+        [folder, name, ext] = fileparts(func_files{i});
+        warped_file = fullfile(folder, ['n' name ext]);
+
+        if exist(warped_file, 'file')
+            fprintf('✔ Normalized functional written: %s\n', warped_file);
+        else
+            fprintf('✘ Normalized functional NOT found: %s\n', warped_file);
+        end
+    end
+
+    fprintf('Functional normalization completed: %s - %s\n\n', subj, run_id);
+end
+
+fprintf('All functional normalization runs finished for subject: %s\n', subj);

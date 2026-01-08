@@ -24,13 +24,16 @@ for s = 1:numel(subjects)
     % run('step_03_realignment.m');
     
     % Coregistration
-    run('step_04_coreg.m');
+    %run('step_04_coreg.m');
     
-    % Normalization
-    % run('step_05_normalize_all.m');
+    % Normalization I
+    % run('step_05_normalize_1.m');
+
+    % Normalization I
+    % run('step_06_normalize_2.m');
     
     % Smoothing
-    % run('step_06_smooth_all.m');
+    run('step_07_smoothing.m');
     
     fprintf('Finished preprocessing for subject: %s\n', subj);
     fprintf('==============================\n\n');
