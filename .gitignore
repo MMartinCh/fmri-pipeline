@@ -1,0 +1,52 @@
+# =========================
+# OS / Editor junk
+# =========================
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# =========================
+# MATLAB
+# =========================
+*.asv
+*.autosave
+*.m~
+*.fig
+*.mex*
+
+# =========================
+# SPM / neuroimaging data
+# =========================
+*.nii
+*.nii.gz
+*.img
+*.hdr
+*.dcm
+*.IMA
+
+# =========================
+# SPM generated outputs
+# =========================
+SPM.mat
+beta_*.nii
+con_*.nii
+spmT_*.nii
+spmF_*.nii
+ResMS.nii
+mask.nii
+RP_*.txt
+
+# =========================
+# Subject folders / outputs
+# =========================
+sub-*/
+derivatives/
+firstlevel/
+secondlevel/
+preproc/
+
+# =========================
+# Logs
+# =========================
+*.log
