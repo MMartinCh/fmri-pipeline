@@ -1,4 +1,4 @@
-%% ==================== SPM25 Smoothing ====================
+%% === SPM25 Smoothing ===
 % Fully automated smoothing for all runs of a subject
 
 % --- Setup SPM ---
@@ -6,29 +6,27 @@ spm('defaults','FMRI');
 spm_jobman('initcfg');
 
 runs = {'01_func','02_func','03_func','04_func'};
-base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden';
-fwhm = [8 8 8];   % smoothing kernel
-prefix = 's';      % smoothed files prefix
+base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden'; 
 
 for r = 1:numel(runs)
     run_id = runs{r};
-    func_dir = fullfile(base_dir, subj, run_id, 'func');  % folder with normalized functional files
+    func_dir = fullfile(base_dir, subj, run_id, 'func');  
     
     % --- Find all normalized functional files (nrs*.nii) ---
-    norm_files = dir(fullfile(func_dir, 'nrs*.nii'));
+    norm_files = dir(fullfile(func_dir, 'waf*.nii'));
     if isempty(norm_files)
         warning('No normalized functional files found for %s - %s', subj, run_id);
         continue;
     end
-    norm_files = fullfile({norm_files.folder}, {norm_files.name})';  % column cell array
+    norm_files = fullfile({norm_files.folder}, {norm_files.name})'; 
     
     % --- Build matlabbatch ---
     clear matlabbatch
     matlabbatch{1}.spm.spatial.smooth.data = norm_files;
-    matlabbatch{1}.spm.spatial.smooth.fwhm = fwhm;
+    matlabbatch{1}.spm.spatial.smooth.fwhm = [8 8 8];
     matlabbatch{1}.spm.spatial.smooth.dtype = 0;
     matlabbatch{1}.spm.spatial.smooth.im = 0;
-    matlabbatch{1}.spm.spatial.smooth.prefix = prefix;
+    matlabbatch{1}.spm.spatial.smooth.prefix = 's';
     
     % --- Run the batch ---
     spm_jobman('run', matlabbatch);

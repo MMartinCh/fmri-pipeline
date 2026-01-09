@@ -1,13 +1,10 @@
-%% ==================== SPM25 Normalize: Estimate & Write ====================
-% Normalizes anatomical image to MNI space (per run)
+%% === SPM25 Normalize: Estimate & Write ===
 
 spm('defaults','FMRI');
 spm_jobman('initcfg');
 
 runs = {'01_func','02_func','03_func','04_func'};
 base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden';
-
-% Use SPM installation TPM automatically
 tpm_path = fullfile(spm('Dir'), 'tpm', 'TPM.nii');
 
 for r = 1:numel(runs)
@@ -54,9 +51,9 @@ for r = 1:numel(runs)
     warped_anat = fullfile(folder, ['w' name ext]);
 
     if exist(warped_anat, 'file')
-        fprintf('✔ Normalized anatomical written: %s\n', warped_anat);
+        fprintf('Normalized anatomical written: %s\n', warped_anat);
     else
-        fprintf('✘ Normalized anatomical NOT found: %s\n', warped_anat);
+        fprintf('Normalized anatomical NOT found: %s\n', warped_anat);
     end
 
     fprintf('Normalization completed: %s - %s\n\n', subj, run_id);

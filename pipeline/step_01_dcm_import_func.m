@@ -6,8 +6,8 @@ spm('defaults', 'FMRI');
 spm_jobman('initcfg');
 
 %% --- Define subjects and runs ---
-subjects = {'vpTEST'};         % Add all your subjects here
-runs = {'01_func','02_func','03_func','04_func'};  % Add all functional run folders
+subjects = {'vpTEST'};    
+runs = {'01_func','02_func','03_func','04_func'};
 base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden';
 
 %% --- Loop over subjects and runs ---
@@ -18,8 +18,8 @@ for s = 1:numel(subjects)
         run_id = runs{r};
         
         % --- Construct folder paths ---
-        raw_dir = fullfile(base_dir, subj, 'raw', [run_id '_raw']);  % e.g., 01_func_raw
-        out_dir = fullfile(base_dir, subj, run_id, 'func');         % e.g., 01_func/func
+        raw_dir = fullfile(base_dir, subj, 'raw', [run_id '_raw']);
+        out_dir = fullfile(base_dir, subj, run_id, 'func');
         
         % --- Make sure output folder exists ---
         if ~exist(out_dir, 'dir')

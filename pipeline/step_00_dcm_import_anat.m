@@ -1,12 +1,11 @@
 %% ==================== SPM25 DICOM Import Pipeline ====================
-% Fully automated import for multiple subjects and runs
 
 % --- Setup SPM ---
 spm('defaults', 'FMRI');
 spm_jobman('initcfg');
 
 %% --- Define runs ---
-runs = {'01_func','02_func','03_func','04_func'};  % Add all functional run folders
+runs = {'01_func','02_func','03_func','04_func'};
 base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden';
 
 %% --- Loop over subjects and runs ---
@@ -18,7 +17,7 @@ for s = 1:numel(subjects)
         
         % --- Construct folder paths ---
         raw_dir = fullfile(base_dir, subj, 'raw', '00_anat_raw');  
-        out_dir = fullfile(base_dir, subj, run_id, 'anat');         % e.g., 01_func/func
+        out_dir = fullfile(base_dir, subj, run_id, 'anat');
         
         % --- Make sure output folder exists ---
         if ~exist(out_dir, 'dir')

@@ -1,4 +1,4 @@
-%% Slice Timing correction 
+%% === Slice Timing correction ===
 spm('defaults','FMRI'); 
 spm_jobman('initcfg');
 
@@ -6,13 +6,13 @@ spm_jobman('initcfg');
 runs = {'01_func','02_func','03_func','04_func'};
 base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden';
 
-nslices = 84;  % number of slices
+nslices = 84; 
 tr = 1;
 ta = tr - tr/nslices;
 so = [1 3 5 7 9 11 13 15 17 19 21 23 25 27 29 31 33 35 37 39 41 43 45 47 49 51 53 55 57 59 61 63 65 67 69 71 73 75 77 79 81 83 ...
       2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80 82 84];
 refslice = 83;
-prefix = 's';
+prefix = 'af';
 
 % --- Loop over runs ---
 for r = 1:numel(runs)

@@ -1,5 +1,4 @@
-%% ==================== SPM25 Coregister: Estimate ====================
-% Coregisters anatomical image to mean functional (per run)
+%% === SPM25 Coregister: Estimate ===
 
 spm('defaults','FMRI');
 spm_jobman('initcfg');
@@ -48,8 +47,8 @@ for r = 1:numel(runs)
     spm_jobman('run', matlabbatch);
 
     fprintf('Coregistration completed: %s - %s\n', subj, run_id);
-    fprintf('  Ref:    %s\n', mean_func);
-    fprintf('  Source: %s\n\n', anat_img);
+    fprintf('Ref:    %s\n', mean_func);
+    fprintf('Source: %s\n\n', anat_img);
 end
 
 fprintf('All coregistration runs finished for subject: %s\n', subj);

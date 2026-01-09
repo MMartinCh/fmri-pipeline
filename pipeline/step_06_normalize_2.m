@@ -1,5 +1,4 @@
-%% ==================== SPM25 Normalize: Write (Functional) ====================
-% Applies deformation fields to realigned functional images
+%% === SPM25 Normalize: Write (Functional) ===
 
 spm('defaults','FMRI');
 spm_jobman('initcfg');
@@ -22,7 +21,7 @@ for r = 1:numel(runs)
     def_field = fullfile(def_field(1).folder, def_field(1).name);
 
     %% --- Find realigned functional images ---
-    func_files = dir(fullfile(func_dir, 'rs*.nii'));
+    func_files = dir(fullfile(func_dir, 'af*.nii'));
     if isempty(func_files)
         warning('No realigned functional files found for %s - %s', subj, run_id);
         continue;
@@ -39,23 +38,10 @@ for r = 1:numel(runs)
           78   76   85];
     matlabbatch{1}.spm.spatial.normalise.write.woptions.vox = [2 2 2];
     matlabbatch{1}.spm.spatial.normalise.write.woptions.interp = 2;
-    matlabbatch{1}.spm.spatial.normalise.write.woptions.prefix = 'n';
+    matlabbatch{1}.spm.spatial.normalise.write.woptions.prefix = 'w';
 
     %% --- Run ---
     spm_jobman('run', matlabbatch);
-
-    %% --- Verify output ---
-    for i = 1:numel(func_files)
-        [folder, name, ext] = fileparts(func_files{i});
-        warped_file = fullfile(folder, ['n' name ext]);
-
-        if exist(warped_file, 'file')
-            fprintf('✔ Normalized functional written: %s\n', warped_file);
-        else
-            fprintf('✘ Normalized functional NOT found: %s\n', warped_file);
-        end
-    end
-
     fprintf('Functional normalization completed: %s - %s\n\n', subj, run_id);
 end
 
