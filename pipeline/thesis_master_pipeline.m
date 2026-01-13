@@ -1,11 +1,14 @@
 %% ==================== Master Pipeline ====================
-% Specify subjects 
-subjects = {'vpTEST'};
+% === Init ===
+spm('defaults', 'FMRI');
+spm_jobman('initcfg');
 
-% Base directory for all subjects
-base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden';
+subjects = {'vp07'};    
+runs = {'01_func','02_func','03_func','04_func'};
 
-% Loop over subjects and call step scripts
+paths = paths();
+
+% === Main ===
 for s = 1:numel(subjects)
     subj = subjects{s};
     fprintf('\n==============================\n');
@@ -20,7 +23,8 @@ for s = 1:numel(subjects)
     run('step_06_normalize_2.m');
     run('step_07_smoothing.m');
     run('step_08_model_specification.m')
-    run('step_09_model_estimation.m')
+    run('step_09_whole_run_specification.m')
+    run('step_10_model_estimation.m')
     
     fprintf('Finished preprocessing for subject: %s\n', subj);
     fprintf('==============================\n\n');

@@ -1,30 +1,18 @@
 %% ==================== SPM25 DICOM Import Pipeline ====================
 
-% --- Setup SPM ---
-spm('defaults', 'FMRI');
-spm_jobman('initcfg');
-
-%% --- Define runs ---
-runs = {'01_func','02_func','03_func','04_func'};
-base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden';
-
-%% --- Loop over subjects and runs ---
 for s = 1:numel(subjects)
     subj = subjects{s};
     
     for r = 1:numel(runs)
         run_id = runs{r};
+
+        raw_dir = fullfile(paths.participants, subj, paths.raw_anat_ext);  
+        out_dir = fullfile(paths.participants, subj, run_id, 'anat');
         
-        % --- Construct folder paths ---
-        raw_dir = fullfile(base_dir, subj, 'raw', '00_anat_raw');  
-        out_dir = fullfile(base_dir, subj, run_id, 'anat');
-        
-        % --- Make sure output folder exists ---
         if ~exist(out_dir, 'dir')
             mkdir(out_dir);
         end
         
-        % --- List all DICOM files in raw folder ---
         dcm_files = dir(fullfile(raw_dir, '*.dcm'));
         if isempty(dcm_files)
             warning('No DICOM files found for %s - %s', subj, run_id);
@@ -32,7 +20,7 @@ for s = 1:numel(subjects)
         end
         dcm_files = fullfile({dcm_files.folder}, {dcm_files.name})';
         
-        % --- Create batch for DICOM import ---
+        
         clear matlabbatch
         matlabbatch{1}.spm.util.import.dicom.data = dcm_files;
         matlabbatch{1}.spm.util.import.dicom.root = 'flat';
@@ -42,7 +30,6 @@ for s = 1:numel(subjects)
         matlabbatch{1}.spm.util.import.dicom.convopts.meta = 0;
         matlabbatch{1}.spm.util.import.dicom.convopts.icedims = 0;
         
-        % --- Run the batch ---
         spm_jobman('run', matlabbatch);
         
         fprintf('DICOM import completed: Subject %s, Run %s\n', subj, run_id);

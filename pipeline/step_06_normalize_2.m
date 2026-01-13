@@ -1,18 +1,13 @@
 %% === SPM25 Normalize: Write (Functional) ===
 
-spm('defaults','FMRI');
-spm_jobman('initcfg');
-
-runs = {'01_func','02_func','03_func','04_func'};
-base_dir = 'C:\Users\Martin\Desktop\Uni\Masterarbeit\Masterarbeit_Datenanalyse\probanden';
 
 for r = 1:numel(runs)
     run_id = runs{r};
 
-    func_dir = fullfile(base_dir, subj, run_id, 'func');
-    anat_dir = fullfile(base_dir, subj, run_id, 'anat');
+    func_dir = fullfile(paths.participants, subj, run_id, 'func');
+    anat_dir = fullfile(paths.participants, subj, run_id, 'anat');
 
-    %% --- Find deformation field ---
+
     def_field = dir(fullfile(anat_dir, 'y_*.nii'));
     if isempty(def_field)
         warning('No deformation field found for %s - %s', subj, run_id);
@@ -20,7 +15,6 @@ for r = 1:numel(runs)
     end
     def_field = fullfile(def_field(1).folder, def_field(1).name);
 
-    %% --- Find realigned functional images ---
     func_files = dir(fullfile(func_dir, 'af*.nii'));
     if isempty(func_files)
         warning('No realigned functional files found for %s - %s', subj, run_id);
@@ -28,7 +22,7 @@ for r = 1:numel(runs)
     end
     func_files = fullfile({func_files.folder}, {func_files.name})';
 
-    %% --- Build matlabbatch ---
+
     clear matlabbatch
     matlabbatch{1}.spm.spatial.normalise.write.subj.def = {def_field};
     matlabbatch{1}.spm.spatial.normalise.write.subj.resample = func_files;
@@ -40,7 +34,6 @@ for r = 1:numel(runs)
     matlabbatch{1}.spm.spatial.normalise.write.woptions.interp = 2;
     matlabbatch{1}.spm.spatial.normalise.write.woptions.prefix = 'w';
 
-    %% --- Run ---
     spm_jobman('run', matlabbatch);
     fprintf('Functional normalization completed: %s - %s\n\n', subj, run_id);
 end
