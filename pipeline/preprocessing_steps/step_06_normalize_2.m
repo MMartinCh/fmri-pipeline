@@ -1,6 +1,5 @@
 %% === SPM25 Normalize: Write (Functional) ===
 
-
 for r = 1:numel(runs)
     run_id = runs{r};
 

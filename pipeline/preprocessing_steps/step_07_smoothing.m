@@ -1,6 +1,5 @@
 %% === SPM25 Smoothing ===
 
-
 for r = 1:numel(runs)
     run_id = runs{r};
     func_dir = fullfile(paths.participants, subj, run_id, 'func');  

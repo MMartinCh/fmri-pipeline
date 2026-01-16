@@ -1,6 +1,5 @@
 %% === SPM25 Coregister: Estimate ===
 
-
 for r = 1:numel(runs)
     run_id = runs{r};
 
