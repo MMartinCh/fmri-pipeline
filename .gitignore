@@ -41,11 +41,8 @@ RP_*.txt
 # =========================
 # Subject folders / outputs
 # =========================
-sub-*/
-derivatives/
-firstlevel/
-secondlevel/
-preproc/
+participants/
+misc/
 
 # =========================
 # Logs
