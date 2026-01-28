@@ -1,7 +1,7 @@
 %% === SPM25: Model Estimation per Run ===
 
 % === Total ===
-total_spm_dir = fullfile(paths.participants, subj, '05_total');
+total_spm_dir = fullfile(paths.participants, subj, '00_loc', 'spm');
 total_spm_mat = fullfile(total_spm_dir, 'SPM.mat');
 
 if ~exist(total_spm_mat, 'file')

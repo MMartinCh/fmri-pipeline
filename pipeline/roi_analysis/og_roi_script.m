@@ -2,10 +2,16 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-spm_name = 'C:\MarsBar_Einführung\Subject_1\functional\stat\SPM.mat'
-roi_file = 'C:\MarsBar_Einführung\Subject_1\ROIs\1_rFFA_roi.mat'
-% Make marsbar design object
-D  = mardo(spm_name);
+paths = paths();  
+
+subj = 'vp04';
+roi_name = 'right_FFA';  
+spm_name = 'SPM.mat';
+
+spm_file = fullfile(paths.participants, subj, '00_loc', 'spm', spm_name);
+roi_file = fullfile(paths.participants, subj, '06_roi', sprintf('%s_roi.mat', roi_name));
+
+D  = mardo(spm_file);
 % Make marsbar ROI object
 R  = maroi(roi_file);
 % Fetch data into marsbar data object                           Y = getdata(R, images(D));
@@ -38,16 +44,17 @@ bin_size = tr(E);
 % Number of FIR time bins to cover length of FIR
 bin_no = fir_length / bin_size;
 
+nTP = 6
+
 % Options - here 'single' FIR model, return estimated % signal change
 opts = struct('single', 1, 'percent', 1);
 
 % Return time courses for all events in fir_tc matrix
 for e_s = 1:n_events
-  fir_tc(:, e_s) = event_fitted_fir(E, e_specs(:,e_s), bin_size, ...
-				    bin_no, opts);
+  fir_tc(:, e_s) = event_fitted(E, e_specs(:,e_s), nTP);
 end
 save subject_1_rFFA_fir.txt fir_tc -ASCII
 save subject_1_rFFA_pc.txt pct_ev -ASCII -TABS
 figure
 plot(fir_tc);
-
+legend(e_names)
