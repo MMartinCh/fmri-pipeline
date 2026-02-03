@@ -43,6 +43,7 @@ RP_*.txt
 # =========================
 participants/
 misc/
+roi_analysis/ 
 
 # =========================
 # Logs
