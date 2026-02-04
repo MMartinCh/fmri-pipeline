@@ -2,20 +2,20 @@ clear
 
 %% Get participants paths
 paths = paths();  
-roi_name = 'left_OFA';  
+roiName = 'right_FFA';  
 
-vp_dirs = dir(fullfile(paths.participants, 'vp*'));
-vp_dirs = vp_dirs([vp_dirs.isdir]);
+vpDirs = dir(fullfile(paths.participants, 'vp*'));
+vpDirs = vpDirs([vpDirs.isdir]);
 
 %% ROI extraction for every participant
-for s = 1:length(vp_dirs)
+for s = 1:length(vpDirs)
 
-    subject = vp_dirs(s).name;
+    subject = vpDirs(s).name;
     fprintf('Subject: %s', subject);
 
     % Find SPM and ROI
     spmName = fullfile(paths.participants, subject, '05_total', 'SPM.mat'); 
-    roiFile = fullfile(paths.participants, subject, '06_roi', sprintf('%s_roi.mat', roi_name));
+    roiFile = fullfile(paths.participants, subject, '06_roi', sprintf('%s_roi.mat', roiName));
 
     if ~exist(spmName, 'file') || ~exist(roiFile, 'file')
         fprintf('%s skipped: missing SPM.mat or ROI file \n', subject);
@@ -76,12 +76,12 @@ for s = 1:length(vp_dirs)
     end
 
     %% Safe outputs
-    fir_file = fullfile(paths.roiAnalysis, 'roi_outputs', sprintf('%s_%s_fir.txt', subject, roi_name));
+    fir_file = fullfile(paths.roiAnalysis, roiName, sprintf('%s_%s_fir.txt', subject, roiName));
     save(fir_file, 'fir_tc', '-ASCII');
 
-    %figure;
-    %plot(fir_tc);
-    %legend(fixedConditions)
-    %title(sprintf('%s - %s FIR', subject, roi_name));
+    figure;
+    plot(fir_tc);
+    legend(fixedConditions)
+    title(sprintf('%s - %s FIR', subject, roiName));
 
 end

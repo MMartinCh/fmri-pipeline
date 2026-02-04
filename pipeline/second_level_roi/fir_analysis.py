@@ -3,9 +3,10 @@ import pandas as pd
 
 # Get files and build df
 base_path = Path(__file__).parent.parent.parent.resolve()
-roi_path = base_path / "analysis" / "roi_analysis"/ "roi_outputs"
 
-brain_region = "left_OFA"
+brain_region = "right_FFA"
+
+roi_path = base_path / "analysis" / "roi_analysis"/ brain_region
 fir_files = [f for f in roi_path.glob(f"*{brain_region}_fir.txt")]
 
 # Build df and sort values to conditions
@@ -31,20 +32,21 @@ for subj_i, file in enumerate(fir_files):
 
 # Collapse time_points to condition averages for subject and safe to csv
 df = df.groupby(["subject", "condition"], as_index=False).mean()
-df.to_csv(roi_path / f"{brain_region}.csv", index= False)
+df.to_csv(roi_path.parent / "df_outputs" / f"{brain_region}.csv", index= False)
 
 # Check df
 df.info()
 print(df.head(12))
 print("...")
 
-# =================
+# ======================================================================
 # Estimate repeated-measures ANOVA time_points ~ condition (per subject)
 from statsmodels.stats.anova import AnovaRM
 
 anova = AnovaRM(data = df, 
                 depvar= "time_point",
                 subject= "subject",
-                within= ["condition"])
+                within= ["condition"]
+                )
 
 print(anova.fit())
