@@ -1,20 +1,28 @@
-%% === SPM25: Model Specification per Run ===            
+%% === SPM25: Localizer Model Specification ===            
 
 for r = 1:numel(runs)
     run_id = runs{r};
-    func_dir = fullfile(paths.participants, subj, run_id, 'func');
+
+    % --- Skip non-localizer runs
+    if ~startsWith(run_id, '00_loc')
+        continue;
+    end
 
     % --- Get functional files
+    func_dir = fullfile(paths.participants, subj, run_id, 'func');
     func_files = dir(fullfile(func_dir, 'swaf*.nii'));
     func_files = fullfile({func_files.folder}, {func_files.name})';
+
     if isempty(func_files)
         warning('No functional files found for %s - %s', subj, run_id);
         continue;
     end
+
     fprintf('Found %d functional files for %s - %s\n', numel(func_files), subj, run_id);
 
     % --- Get MCF
     mcf_file = fullfile(paths.participants, subj, run_id, 'mcf', 'MCF.mat');
+
     if ~exist(mcf_file, 'file')
         warning('No MCF file found for %s - %s', subj, run_id);
     else
@@ -23,6 +31,7 @@ for r = 1:numel(runs)
 
     % --- Get motion regressors
     rp_file = dir(fullfile(func_dir, 'rp_*.txt'));
+
     if isempty(rp_file)
         warning('No motion regressor found for %s - %s', subj, run_id);
         rp_file_path = {};
@@ -32,23 +41,17 @@ for r = 1:numel(runs)
     end
 
     spm_dir = fullfile(paths.participants, subj, run_id, 'spm');
+
     if ~exist(spm_dir, 'dir')
         mkdir(spm_dir);
     end
 
-    % === Create and run batch
+    % === Create and run batch with localizer parameters
     clear matlabbatch
     matlabbatch{1}.spm.stats.fmri_spec.dir = {spm_dir};
     matlabbatch{1}.spm.stats.fmri_spec.timing.units = 'secs';
 
-    if startsWith(run_id, '00_loc')
-        % --- Localizer
-        matlabbatch{1}.spm.stats.fmri_spec.timing.RT = 2;
-    else
-        % --- Functional 
-        matlabbatch{1}.spm.stats.fmri_spec.timing.RT = 1;
-    end
-
+    matlabbatch{1}.spm.stats.fmri_spec.timing.RT = 2;
     matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t  = 16;
     matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = 8;
 
@@ -68,7 +71,6 @@ for r = 1:numel(runs)
     matlabbatch{1}.spm.stats.fmri_spec.cvi            = 'AR(1)';
 
     spm_jobman('run', matlabbatch);
-    fprintf('Model specification completed for subject: %s - run: %s\n', subj, run_id);
 end
 
-fprintf('All first-level models created separately for subject: %s\n', subj);
+fprintf('First-level Localizer model created for subject: %s\n', subj);

@@ -1,21 +1,31 @@
 clear
 
-%% Get participants paths
+%% Get participant paths
 paths = paths();  
 roiName = 'right_FFA';  
 
-vpDirs = dir(fullfile(paths.participants, 'vp*'));
-vpDirs = vpDirs([vpDirs.isdir]);
+customSubjects = {};
+
+%% Decide custom or full processing
+if ~isempty(customSubjects)
+    subjects = customSubjects;
+    fprintf('Custom processing. \n');
+else 
+    vpDirs = dir(fullfile(paths.participants, 'vp*'));
+    vpDirs = vpDirs([vpDirs.isdir]);
+    subjects = {vpDirs.name};
+    fprintf('Full processing for all subjects. \n')
+end
 
 %% ROI extraction for every participant
-for s = 1:length(vpDirs)
+for s = 1:numel(subjects)
 
-    subject = vpDirs(s).name;
+    subject = subjects{s};
     fprintf('Subject: %s', subject);
 
     % Find SPM and ROI
     spmName = fullfile(paths.participants, subject, '05_total', 'SPM.mat'); 
-    roiFile = fullfile(paths.participants, subject, '06_roi', sprintf('%s_roi.mat', roiName));
+    roiFile = fullfile(paths.participants, 'vp01', '06_roi', sprintf('%s_roi.mat', roiName));
 
     if ~exist(spmName, 'file') || ~exist(roiFile, 'file')
         fprintf('%s skipped: missing SPM.mat or ROI file \n', subject);

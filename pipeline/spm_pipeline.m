@@ -25,12 +25,9 @@ for s = 1:numel(subjects)
     run('step_07_smoothing.m');
 
     % --- First-Level-Analysis
-    run('step_08_model_specification.m')
+    run('step_08_localizer_specification.m')
     run('step_09_whole_run_specification.m')
     run('step_10_model_estimation.m')
-
-    % --- Second-Level-Analysis (Fixed-Design)
-    % run('incoming...')
 
     fprintf('Finished preprocessing for subject: %s\n', subj);
     fprintf('==============================\n\n');
