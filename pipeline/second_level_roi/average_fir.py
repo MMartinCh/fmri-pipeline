@@ -9,21 +9,27 @@ brain_region = "right_FFA"
 roi_path = base_path / "analysis" / "roi_analysis"/ brain_region
 fir_files = [f for f in roi_path.glob(f"*{brain_region}_fir.txt")]
 
-# Build df and sort values to conditions
-df = pd.DataFrame(columns= ["row_i", "values"])
+data_array = []
 
-for file in fir_files:
+for subj in fir_files:
+    subj_id = (subj.stem).split("_")[0]
 
-    rows = []
-    with open(file, 'r') as f:
-        for line in f:
-            row = [float(x) for x in line.split()]
-            rows.append(row)
+    with open(subj, "rb") as f:
+        for i, line in enumerate(f):
+            con, incon, neut = map(float, line.split())
 
-    # Average all lines for all participants per condition
+            data_array.append({
+                "subject": subj_id,
+                "tp_i": i + 1,
+                "Congruent": con,
+                "Incongruent": incon,
+                "Neutral": neut,
+            })
 
-    for i, row in enumerate(rows):
-        df["row_i"] = i
-        df["values"] = row
+df = pd.DataFrame(data_array)
+print(df.head(10))
 
-print(df.head())
+out_path_csv = roi_path.parent / "df_outputs" / f"{brain_region}_all_tc.csv"
+out_path_xlsx = roi_path.parent / "df_outputs" / f"{brain_region}_all_tc.xlsx"
+df.to_csv(out_path_csv, index= False)
+df.to_excel(out_path_xlsx, index= False)

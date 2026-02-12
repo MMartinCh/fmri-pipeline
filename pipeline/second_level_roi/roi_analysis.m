@@ -4,7 +4,7 @@ clear
 paths = paths();  
 roiName = 'right_FFA';  
 
-customSubjects = {};
+customSubjects = {'vp09_MH'};
 
 %% Decide custom or full processing
 if ~isempty(customSubjects)
@@ -25,7 +25,7 @@ for s = 1:numel(subjects)
 
     % Find SPM and ROI
     spmName = fullfile(paths.participants, subject, '05_total', 'SPM.mat'); 
-    roiFile = fullfile(paths.participants, 'vp01', '06_roi', sprintf('%s_roi.mat', roiName));
+    roiFile = fullfile(paths.participants, subject, '06_roi', sprintf('%s_roi.mat', roiName));
 
     if ~exist(spmName, 'file') || ~exist(roiFile, 'file')
         fprintf('%s skipped: missing SPM.mat or ROI file \n', subject);
@@ -40,11 +40,11 @@ for s = 1:numel(subjects)
     E = estimate(D, Y);
 
     % Specify conditions
-    fixedConditions = {'coherent', 'incoherent', 'neutral'};
+    fixedConditions = {'Congruent', 'Incongruent', 'Neutral'};
 
-    conditionMap.coherent   = {'coherent'};
-    conditionMap.incoherent = {'incoherent_real', 'incoherent_mock'};
-    conditionMap.neutral    = {'neutral'};
+    conditionMap.Congruent   = {'Congruent'};
+    conditionMap.Incongruent = {'Incongruent_Real', 'Incongruent_Fake'};
+    conditionMap.Neutral    = {'Neutral'};
     
     [eSpecs, eNames] = event_specs(E);
     
@@ -85,13 +85,21 @@ for s = 1:numel(subjects)
         fir_tc(:,c) = mean(fir_allRuns, 2);
     end
 
-    %% Safe outputs
-    fir_file = fullfile(paths.roiAnalysis, roiName, sprintf('%s_%s_fir.txt', subject, roiName));
-    save(fir_file, 'fir_tc', '-ASCII');
-
+    %% Plot FIR
     figure;
     plot(fir_tc);
     legend(fixedConditions)
     title(sprintf('%s - %s FIR', subject, roiName));
 
+    %% Safe outputs
+    fir_file = fullfile(paths.roiAnalysis, roiName, sprintf('%s_%s_fir.txt', subject, roiName));
+    fig_file = fullfile(paths.roiAnalysis, roiName, 'plots/', sprintf('%s_%s_fir.png', subject, roiName));
+
+    save(fir_file, 'fir_tc', '-ASCII');
+    saveas(gcf, fig_file);
+
+    close(gcf);
+
 end
+
+beep;
