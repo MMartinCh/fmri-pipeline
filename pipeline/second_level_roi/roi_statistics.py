@@ -4,7 +4,7 @@ import pandas as pd
 # Get files and build df
 base_path = Path(__file__).parent.parent.parent.resolve()
 
-brain_region = "right_FFA"
+brain_region = "left_OFA"
 
 roi_path = base_path / "analysis" / "roi_analysis"/ brain_region
 fir_files = [f for f in roi_path.glob(f"*{brain_region}_fir.txt")]
@@ -20,10 +20,11 @@ for subj_i, file in enumerate(fir_files):
     with open(file, 'r') as f:
         lines = f.readlines()
 
+        row4 = [float(x) for x in lines[3].split()]
         row5 = [float(x) for x in lines[4].split()]
         row6 = [float(x) for x in lines[5].split()]
 
-        peak = [max(v5, v6) for v5, v6 in zip(row5, row6)]
+        peak = [max(v4, v5, v6) for v4, v5, v6 in zip(row4, row5, row6)]
         rows.append(peak)
 
     for row in rows:
@@ -45,9 +46,10 @@ print(df.head(12))
 print("...")
 
 # ======================================================================
-# Estimate repeated-measures ANOVA time_points ~ condition (per subject)
 from statsmodels.stats.anova import AnovaRM
+import pingouin as pg
 
+# Repeated-measures ANOVA for time_points ~ condition (per subject)
 anova = AnovaRM(data = df, 
                 depvar= "time_point",
                 subject= "subject",
@@ -55,3 +57,14 @@ anova = AnovaRM(data = df,
                 )
 
 print(anova.fit())
+
+# Post-hoc Pairwise t-Tests
+posthoc = pg.pairwise_tests(
+    data=df,
+    dv="time_point",
+    within="condition",
+    subject="subject",
+    padjust="holm"
+)
+
+print(posthoc)

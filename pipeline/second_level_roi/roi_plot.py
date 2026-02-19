@@ -5,7 +5,7 @@ import pandas as pd
 # Get files and build df
 base_path = Path(__file__).parent.parent.parent.resolve()
 
-brain_region = "right_FFA"
+brain_region = "left_OFA"
 
 roi_path = base_path / "analysis" / "roi_analysis"/ brain_region
 fir_files = [f for f in roi_path.glob(f"*{brain_region}_fir.txt")]

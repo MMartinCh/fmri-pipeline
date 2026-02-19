@@ -1,10 +1,11 @@
 clear
 
-%% Get participant paths
+%% Specify session
 paths = paths();  
-roiName = 'right_FFA';  
+roiName = 'left_OFA';
+coordTable = readtable('roi_coordinates.xlsx');
 
-customSubjects = {'vp09_MH'};
+customSubjects = {};
 
 %% Decide custom or full processing
 if ~isempty(customSubjects)
@@ -23,9 +24,21 @@ for s = 1:numel(subjects)
     subject = subjects{s};
     fprintf('Subject: %s', subject);
 
-    % Find SPM and ROI
+    %% Find SPM and ROI
     spmName = fullfile(paths.participants, subject, '05_total', 'SPM.mat'); 
     roiFile = fullfile(paths.participants, subject, '06_roi', sprintf('%s_roi.mat', roiName));
+
+    % Create ROI sphere from coordinates 
+    rowIdx = strcmp(coordTable.path, subject);
+    coordStr = coordTable{rowIdx, roiName};
+    coordStr = char(coordStr);
+        
+    center = sscanf(coordStr, '%f %f %f')';
+    radius = 4;
+
+    roi = maroi_sphere(struct('centre', center, 'radius', radius));
+    roi = label(roi, roiName);
+    saveroi(roi, roiFile)
 
     if ~exist(spmName, 'file') || ~exist(roiFile, 'file')
         fprintf('%s skipped: missing SPM.mat or ROI file \n', subject);
@@ -92,6 +105,17 @@ for s = 1:numel(subjects)
     title(sprintf('%s - %s FIR', subject, roiName));
 
     %% Safe outputs
+    roiOutFolder = fullfile(paths.roiAnalysis, roiName);
+    plotFolder   = fullfile(roiOutFolder, 'plots');
+    
+    if ~exist(roiOutFolder, 'dir')
+        mkdir(roiOutFolder);
+    end
+    
+    if ~exist(plotFolder, 'dir')
+        mkdir(plotFolder);
+    end
+
     fir_file = fullfile(paths.roiAnalysis, roiName, sprintf('%s_%s_fir.txt', subject, roiName));
     fig_file = fullfile(paths.roiAnalysis, roiName, 'plots/', sprintf('%s_%s_fir.png', subject, roiName));
 
@@ -102,4 +126,5 @@ for s = 1:numel(subjects)
 
 end
 
+fprintf('ROI ANALYSIS FINISHED')
 beep;
