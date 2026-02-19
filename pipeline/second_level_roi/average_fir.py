@@ -1,4 +1,5 @@
 from pathlib import Path
+import matplotlib.pyplot as plt
 import pandas as pd
 
 # Get files and build df
@@ -27,9 +28,14 @@ for subj in fir_files:
             })
 
 df = pd.DataFrame(data_array)
+df = df.groupby("tp_i", as_index=False)[["Congruent", "Incongruent", "Neutral"]].mean()
 print(df.head(10))
 
-out_path_csv = roi_path.parent / "df_outputs" / f"{brain_region}_all_tc.csv"
-out_path_xlsx = roi_path.parent / "df_outputs" / f"{brain_region}_all_tc.xlsx"
-df.to_csv(out_path_csv, index= False)
-df.to_excel(out_path_xlsx, index= False)
+plt.plot(df["tp_i"], df["Congruent"], label="Congruent")
+plt.plot(df["tp_i"], df["Incongruent"], label="Incongruent")
+plt.plot(df["tp_i"], df["Neutral"], label="Neutral")
+
+plt.xlabel("Timepoint")
+plt.ylabel("Beta")
+plt.legend()
+plt.show()

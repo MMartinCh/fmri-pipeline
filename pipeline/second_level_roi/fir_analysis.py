@@ -16,10 +16,15 @@ for subj_i, file in enumerate(fir_files):
     print(f"Extract time points for vp{subj_i + 1}")
 
     rows = []
+
     with open(file, 'r') as f:
-        for line in f:
-            row = [float(x) for x in line.split()]
-            rows.append(row)
+        lines = f.readlines()
+
+        row5 = [float(x) for x in lines[4].split()]
+        row6 = [float(x) for x in lines[5].split()]
+
+        peak = [max(v5, v6) for v5, v6 in zip(row5, row6)]
+        rows.append(peak)
 
     for row in rows:
         for i, v in enumerate(row):
