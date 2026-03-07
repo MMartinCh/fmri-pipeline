@@ -2,10 +2,10 @@ clear
 
 %% Specify session
 paths = paths();  
-roiName = 'right_FFA';
+roiName = 'right_OFA';
 coordTable = readtable('roi_coordinates.xlsx');
 
-customSubjects = {'vp02'};
+customSubjects = {};
 
 %% Decide custom or full processing
 if ~isempty(customSubjects)
@@ -25,7 +25,7 @@ for s = 1:numel(subjects)
     fprintf('Subject: %s', subject);
 
     %% Find SPM and ROI
-    spmName = fullfile(paths.participants, subject, '05_total', 'SPM.mat'); 
+    spmName = fullfile(paths.participants, subject, '05_total', 'face_split','SPM.mat'); 
     roiFile = fullfile(paths.participants, subject, '06_roi', sprintf('%s_roi.mat', roiName));
 
     % Create ROI sphere from coordinates 
@@ -53,11 +53,13 @@ for s = 1:numel(subjects)
     E = estimate(D, Y);
 
     % Specify conditions
-    fixedConditions = {'Congruent', 'Incongruent', 'Neutral'};
+    fixedConditions = {'Congruent', 'Incongruent_Real', 'Incongruent_Fake', 'Neutral_Real', 'Neutral_Fake'};
 
-    conditionMap.Congruent   = {'Congruent'};
-    conditionMap.Incongruent = {'Incongruent_Real', 'Incongruent_Fake'};
-    conditionMap.Neutral    = {'Neutral'};
+    conditionMap.Congruent = {'Congruent'};
+    conditionMap.Incongruent_Real = {'Incongruent_Real'};
+    conditionMap.Incongruent_Fake = {'Incongruent_Fake'};
+    conditionMap.Neutral_Real = {'Neutral_Real'};
+    conditionMap.Neutral_Fake = {'Neutral_Fake'};
     
     [eSpecs, eNames] = event_specs(E);
     
@@ -65,15 +67,8 @@ for s = 1:numel(subjects)
     
     for c = 1:numel(fixedConditions)
         thisCond = fixedConditions{c};
-        subConds = conditionMap.(thisCond);
-    
-        idx = [];
-        for sc = 1:numel(subConds)
-            pattern = ['(^|_)' subConds{sc} '(_|$)'];
-            idx = [idx find(~cellfun('isempty', regexp(eNames, pattern)))];
-        end
-    
-        conditionIdx.(thisCond) = idx;
+        pattern = ['(^|_)' thisCond '(_|$)'];
+        conditionIdx.(thisCond) = find(~cellfun('isempty', regexp(eNames, pattern)));
     end
 
     % Define timing parameters
@@ -105,7 +100,7 @@ for s = 1:numel(subjects)
     title(sprintf('%s - %s FIR', subject, roiName));
 
     %% Safe outputs
-    roiOutFolder = fullfile(paths.roiAnalysis, roiName);
+    roiOutFolder = fullfile(paths.roiAnalysis, roiName, 'face_split');
     plotFolder   = fullfile(roiOutFolder, 'plots');
     
     if ~exist(roiOutFolder, 'dir')
@@ -116,8 +111,8 @@ for s = 1:numel(subjects)
         mkdir(plotFolder);
     end
 
-    fir_file = fullfile(paths.roiAnalysis, roiName, sprintf('%s_%s_fir.txt', subject, roiName));
-    fig_file = fullfile(paths.roiAnalysis, roiName, 'plots/', sprintf('%s_%s_fir.png', subject, roiName));
+    fir_file = fullfile(roiOutFolder, sprintf('%s_%s_fir_FS.txt', subject, roiName));
+    fig_file = fullfile(plotFolder, sprintf('%s_%s_fir_FS.png', subject, roiName));
 
     save(fir_file, 'fir_tc', '-ASCII');
     saveas(gcf, fig_file);

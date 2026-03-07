@@ -5,7 +5,7 @@ spm_jobman('initcfg');
 
 paths = paths();
 
-subjects = {'vp09_MH'};
+subjects = {'vp02', 'vp03', 'vp07', 'vp09_MH', 'vp11_KL', 'vp12_AJ', 'vp13_HG', 'vp14_UM', 'vp15_LJ', 'vp16_KR', 'vp17_LM', 'vp18_LS'};
 runs = {'01_func', '02_func', '03_func', '04_func'};
 
 options = ['spec'];
@@ -32,9 +32,9 @@ for s = 1:numel(subjects)
 
     % --- First-Level-Analysis
     if ismember('spec', options)
-        run('step_08_localizer_specification.m');
-        run('step_09_whole_run_specification.m');
-        run('step_10_model_estimation.m');
+        %run('step_08_localizer_specification.m');
+        run('step_09_whole_run_specification_CUE_SPLIT.m');
+        run('step_10_model_estimation_CUE_SPLIT.m');
     else
         fprintf('Skipping First-Level-Analysis...\n');
     end

@@ -4,7 +4,8 @@ import pandas as pd
 # Get files and build df
 base_path = Path(__file__).parent.parent.parent.resolve()
 
-brain_region = "left_OFA"
+brain_region = "right_FFA"
+exclude_vp = ("vp13", "vp14", "vp16", "vp09", "vp07", "vp17", "vp12", "vp03", "vp02")
 
 roi_path = base_path / "analysis" / "roi_analysis"/ brain_region
 fir_files = [f for f in roi_path.glob(f"*{brain_region}_fir.txt")]
@@ -13,28 +14,34 @@ fir_files = [f for f in roi_path.glob(f"*{brain_region}_fir.txt")]
 df = pd.DataFrame(columns= ["subject", "condition", "time_point"])
 
 for subj_i, file in enumerate(fir_files):
-    print(f"Extract time points for vp{subj_i + 1}")
-
+    subj_id = file.stem.split("_")[0]
+    
     rows = []
 
-    with open(file, 'r') as f:
-        lines = f.readlines()
+    if not subj_id in exclude_vp:
+        print(f"Extract time points for {subj_id}")
 
-        row4 = [float(x) for x in lines[3].split()]
-        row5 = [float(x) for x in lines[4].split()]
-        row6 = [float(x) for x in lines[5].split()]
+        with open(file, 'r') as f:
+            lines = f.readlines()
 
-        peak = [max(v4, v5, v6) for v4, v5, v6 in zip(row4, row5, row6)]
-        rows.append(peak)
+            row4 = [float(x) for x in lines[3].split()]
+            row5 = [float(x) for x in lines[4].split()]
+            row6 = [float(x) for x in lines[5].split()]
 
-    for row in rows:
-        for i, v in enumerate(row):
-            if i == 0:
-                df.loc[len(df)] = {"subject": subj_i + 1, "condition": "congruent", "time_point": v}
-            elif i == 1:
-                df.loc[len(df)] = {"subject": subj_i + 1, "condition": "incongruent", "time_point": v}
-            elif i == 2:
-                df.loc[len(df)] = {"subject": subj_i + 1, "condition": "neutral", "time_point": v}
+            peak = [max(v4, v5, v6) for v4, v5, v6 in zip(row4, row5, row6)]
+            rows.append(peak)
+
+        for row in rows:
+            for i, v in enumerate(row):
+                if i == 0:
+                    df.loc[len(df)] = {"subject": subj_i + 1, "condition": "congruent", "time_point": v}
+                elif i == 1:
+                    df.loc[len(df)] = {"subject": subj_i + 1, "condition": "incongruent", "time_point": v}
+                elif i == 2:
+                    df.loc[len(df)] = {"subject": subj_i + 1, "condition": "neutral", "time_point": v}
+
+    else:
+        print(f"Subject {subj_id} excluded.")
 
 # Collapse time_points to condition averages for subject and safe to csv
 df = df.groupby(["subject", "condition"], as_index=False).mean()
