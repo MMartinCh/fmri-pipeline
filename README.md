@@ -1,7 +1,7 @@
 # fMRI Preprocessing and Analysis Pipeline
 
 ## Fully functional Python and MATLAB workflow used to convert experiment logs, preprocess fMRI data, statistical analysis and visualize results
-This workflow was developed to process and analyze the data collected from an experiment on Predictive Processing in the Face-Selective Cortex, conducted for my Master's thesis.
+This workflow was developed to process and analyze the data collected from an experiment on Predictive Processing in the Face-Selective Cortex, conducted for my Master's thesis. It is planned to be restructured and unified, for improved clarity and simplification. 
 It handles all steps from log conversion, preprocessing and whole-brain analysis, to ROI extraction and statistical analysis of extracted time-courses.
 
 It contains:
