@@ -1,0 +1,15 @@
+# mcf_conversion
+python <= 3.10
+numpy
+pandas
+
+# fMRI-pipeline
+MATLAB
+SPM12
+MarsBar
+
+# Analysis and Visualization
+python
+pandas
+matplotlib
+
