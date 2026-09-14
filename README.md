@@ -9,14 +9,17 @@ To recreate the data analysis conducted for my experiment, run the modules in th
   3. [ROI analysis](https://github.com/MMartinCh/fmri-pipeline/blob/main/pipeline/roi/roi_analysis.m) (second-level ROI FIR-extraction)
   4. [Inference tests](https://github.com/MMartinCh/fmri-pipeline/blob/main/statistics/roi_statistics.py) (group-level inference statistics: rm-ANOVA and conditional posthoc pairwise t-Tests)
 
-## Technology used
-First- / Second-Level fMRI Data Analysis:
+## Tech Stack
+**First- / Second-Level fMRI Data Analysis**
  - MATLAB (2024)
  - SPM12
  - MarsBaR
 
-MCF Conversion and Statistical Inference:
+**MCF Conversion and Statistical Inference**
  - Python 3.13
  - Pandas
  - Numpy
  - Pingouin
+
+## License
+[MIT © Moritz Martin](https://github.com/MMartinCh/fmri-pipeline/blob/main/LICENSE)
