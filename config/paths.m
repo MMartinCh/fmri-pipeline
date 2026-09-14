@@ -4,7 +4,7 @@ function paths = paths()
 
     paths.participants = fullfile(paths.root, 'analysis', 'participants');
     
-    paths.roiAnalysis = fullfile(paths.root, 'analysis', 'roi_analysis');
+    paths.roiAnalysis = fullfile(paths.root, 'outputs', 'roi_analysis');
 
     paths.raw_anat_ext = 'raw\raw_anat';
 
